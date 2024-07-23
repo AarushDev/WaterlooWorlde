@@ -7,14 +7,16 @@ import {
   initState,
   MAX_GUESS_LENGTH,
   validate,
+  winner,
 } from "./util/validateGuess";
 
-//Maybe add an array of all our guesses in state and map through it.
 export default function App() {
   const [guesses, setGuesses] = useState(init());
   const [rowAnswer, setRowAnswer] = useState<guessState[][]>(initState());
   const [curGuess, setCurGuess] = useState(0);
   const [targetWord, setTargetWord] = useState("BOOST");
+  const [win, setWin] = useState(false);
+  const [loss, setLoss] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -31,6 +33,11 @@ export default function App() {
         guesses[curGuess].length === MAX_GUESS_LENGTH
       ) {
         const answer = validate(guesses[curGuess], targetWord);
+        if (winner(answer)) {
+          setWin(true);
+        } else if (curGuess + 1 >= 6) {
+          setLoss(true);
+        }
         setRowAnswer((prevState) =>
           prevState.map((row, index) => (index === curGuess ? answer : row))
         );
@@ -52,11 +59,14 @@ export default function App() {
   return (
     <div className="flex flex-col h-full">
       <NavBar />
-      <main className="flex flex-col items-center">
-        {guesses.map((row, index) => (
-          <GameRow guess={row} key={index} rowAnswer={rowAnswer[index]} />
-        ))}
-      </main>
+      {win && <p className="text-3xl text-pink-500">YOU WON</p>}
+      {!loss && (
+        <main className="flex flex-col items-center mt-6">
+          {guesses.map((row, index) => (
+            <GameRow guess={row} key={index} rowAnswer={rowAnswer[index]} />
+          ))}
+        </main>
+      )}
     </div>
   );
 }

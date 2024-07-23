@@ -1,4 +1,4 @@
-import { guessState, MAX_GUESS_LENGTH } from "../util/validateGuess";
+import { guessState, MAX_GUESS_LENGTH, winner } from "../util/validateGuess";
 
 interface GameRowProps {
   guess: string;
@@ -11,22 +11,30 @@ interface TileProps {
 }
 
 export default function GameRow({ guess, rowAnswer }: GameRowProps) {
+  const isShake = winner(rowAnswer);
+
   const paddedGuess = guess.padEnd(MAX_GUESS_LENGTH, " ").split("");
 
   const displayGuess = paddedGuess.map((char, index) => (
     <Tile key={index} value={char} guessResult={rowAnswer[index]} />
   ));
 
-  return <div className="flex gap-4 mt-4">{displayGuess}</div>;
+  return (
+    <div className={`flex gap-2 ${isShake && "animate-shake"}`}>
+      {displayGuess}
+    </div>
+  );
 }
 
 function Tile({ value, guessResult }: TileProps) {
   const style =
-    guessResult == null ? "border-gray-500" : CharacterStyles[guessResult];
+    guessResult == null
+      ? "border-wordleGray"
+      : CharacterStyles[guessResult] + " text-white";
 
   return (
     <div
-      className={`border-2 flex items-center justify-center h-16 w-16 text-2xl font-medium ${style}`}
+      className={`border-2 flex items-center justify-center h-16 w-16 text-3xl font-bold mt-2 ${style}`}
     >
       {value}
     </div>
@@ -34,7 +42,7 @@ function Tile({ value, guessResult }: TileProps) {
 }
 
 const CharacterStyles = {
-  [guessState.Correct]: "bg-green-500 border-green-500",
-  [guessState.Misplaced]: "bg-yellow-500 border-yellow-500",
-  [guessState.Miss]: "bg-red-500 border-red-500",
+  [guessState.Correct]: "bg-wordleGreen border-wordleGreen",
+  [guessState.Misplaced]: "bg-wordleYellow border-wordleYellow",
+  [guessState.Miss]: "bg-wordleGray border-wordleGray",
 };
