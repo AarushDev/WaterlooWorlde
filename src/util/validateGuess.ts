@@ -50,3 +50,8 @@ export function winner(guessStateArray: guessState[]) {
   }
   return true;
 }
+
+export function shake() {
+  const randNum = Math.random() * 10;
+  return randNum > 5;
+}

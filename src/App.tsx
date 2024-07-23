@@ -6,6 +6,7 @@ import {
   init,
   initState,
   MAX_GUESS_LENGTH,
+  shake,
   validate,
   winner,
 } from "./util/validateGuess";
@@ -17,6 +18,7 @@ export default function App() {
   const [targetWord, setTargetWord] = useState("BOOST");
   const [win, setWin] = useState(false);
   const [loss, setLoss] = useState(false);
+  const [isShake, setIsShake] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -28,10 +30,11 @@ export default function App() {
             index === curGuess ? (guess += curKey) : guess
           )
         );
-      } else if (
-        curKey === "ENTER" &&
-        guesses[curGuess].length === MAX_GUESS_LENGTH
-      ) {
+      } else if (curKey === "ENTER") {
+        if (guesses[curGuess].length !== MAX_GUESS_LENGTH || shake()) {
+          setIsShake(true);
+          return;
+        }
         const answer = validate(guesses[curGuess], targetWord);
         if (winner(answer)) {
           setWin(true);
@@ -63,7 +66,12 @@ export default function App() {
       {!loss && (
         <main className="flex flex-col items-center mt-6">
           {guesses.map((row, index) => (
-            <GameRow guess={row} key={index} rowAnswer={rowAnswer[index]} />
+            <GameRow
+              guess={row}
+              key={index}
+              rowAnswer={rowAnswer[index]}
+              isShake={index === curGuess ? isShake : false}
+            />
           ))}
         </main>
       )}

@@ -1,8 +1,9 @@
-import { guessState, MAX_GUESS_LENGTH, winner } from "../util/validateGuess";
+import { guessState, MAX_GUESS_LENGTH } from "../util/validateGuess";
 
 interface GameRowProps {
   guess: string;
   rowAnswer: guessState[];
+  isShake: boolean;
 }
 
 interface TileProps {
@@ -10,9 +11,7 @@ interface TileProps {
   guessResult: guessState;
 }
 
-export default function GameRow({ guess, rowAnswer }: GameRowProps) {
-  const isShake = winner(rowAnswer);
-
+export default function GameRow({ guess, rowAnswer, isShake }: GameRowProps) {
   const paddedGuess = guess.padEnd(MAX_GUESS_LENGTH, " ").split("");
 
   const displayGuess = paddedGuess.map((char, index) => (
