@@ -11,12 +11,13 @@ import {
   winner,
 } from "./util/validateGuess";
 
+//add animation when guess
 export default function App() {
   const [guesses, setGuesses] = useState(init());
   const [rowAnswer, setRowAnswer] = useState<guessState[][]>(initState());
   const [curGuess, setCurGuess] = useState(0);
 
-  const [targetWord, setTargetWord] = useState("");
+  const [targetWord, setTargetWord] = useState("HELLO");
 
   const [win, setWin] = useState(false);
   const [loss, setLoss] = useState(false);
@@ -78,7 +79,12 @@ export default function App() {
     const handleKeyDown = (event: KeyboardEvent) => {
       const curKey = event.key.toUpperCase();
 
-      if (curKey.length === 1 && guesses[curGuess].length != MAX_GUESS_LENGTH) {
+      if (
+        curKey.length === 1 &&
+        curKey.charCodeAt(0) >= 65 &&
+        curKey.charCodeAt(0) <= 90 &&
+        guesses[curGuess].length != MAX_GUESS_LENGTH
+      ) {
         AddLetter(curKey);
       } else if (curKey === "ENTER") {
         if (guesses[curGuess].length !== MAX_GUESS_LENGTH) {
@@ -99,7 +105,11 @@ export default function App() {
     <div className="flex flex-col h-full">
       <NavBar />
       {win && <p className="text-3xl text-pink-500">YOU WON</p>}
-      {loss && <p className="text-3xl text-red-500">YOU LOST</p>}
+      {loss && (
+        <p className="text-3xl text-red-500">
+          YOU LOST THE WORD WAS {targetWord}
+        </p>
+      )}
       {!loss && (
         <main className="flex flex-col items-center mt-6">
           {guesses.map((row, index) => (

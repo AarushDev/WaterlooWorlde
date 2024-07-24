@@ -60,7 +60,7 @@ export function initState() {
 export function initStateArray() {
   const guessArray = [];
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     guessArray.push(guessState.Miss);
   }
 
@@ -68,7 +68,9 @@ export function initStateArray() {
 }
 
 export function winner(guessStateArray: guessState[]) {
-  return guessStateArray.every((entry) => entry === guessState.Correct);
+  return guessStateArray.every((entry) => {
+    return entry === guessState.Correct;
+  });
 }
 
 export function shake() {
