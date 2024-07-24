@@ -14,10 +14,30 @@ export default function App() {
   const [guesses, setGuesses] = useState(init());
   const [rowAnswer, setRowAnswer] = useState<guessState[][]>(initState());
   const [curGuess, setCurGuess] = useState(0);
-  const [targetWord, setTargetWord] = useState("BOOST");
+
+  const [targetWord, setTargetWord] = useState("");
+
   const [win, setWin] = useState(false);
   const [loss, setLoss] = useState(false);
   const [invalidGuess, setInvalidGuess] = useState(false);
+
+  useEffect(() => {
+    async function fetchWords() {
+      try {
+        const response = await fetch(
+          "https://api.datamuse.com/words?sp=?????&max=500"
+        );
+        const data = await response.json();
+        setTargetWord(
+          data[Math.floor(Math.random() * data.length)].word.toUpperCase()
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchWords();
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
