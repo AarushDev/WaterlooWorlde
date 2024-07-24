@@ -6,6 +6,7 @@ import {
   init,
   initState,
   MAX_GUESS_LENGTH,
+  MAX_GUESS_ATTEMPTS,
   validate,
   winner,
 } from "./util/validateGuess";
@@ -39,38 +40,53 @@ export default function App() {
     fetchWords();
   }, []);
 
+  const AddLetter = (curKey: string) => {
+    setGuesses((prevState) =>
+      prevState.map((guess, index) =>
+        index === curGuess ? (guess += curKey) : guess
+      )
+    );
+  };
+
+  const SubmitInvalidGuess = () => {
+    setInvalidGuess(true);
+    setTimeout(() => setInvalidGuess(false), 500);
+  };
+
+  const SubmitValidGuess = () => {
+    const answer = validate(guesses[curGuess], targetWord);
+    if (winner(answer)) {
+      setWin(true);
+    } else if (curGuess + 1 >= MAX_GUESS_ATTEMPTS) {
+      setLoss(true);
+    }
+    setRowAnswer((prevState) =>
+      prevState.map((row, index) => (index === curGuess ? answer : row))
+    );
+    setCurGuess((prevState) => prevState + 1);
+  };
+
+  const DeleteGuess = () => {
+    setGuesses((prevState) =>
+      prevState.map((guess, index) =>
+        index === curGuess ? guess.slice(0, -1) : guess
+      )
+    );
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const curKey = event.key.toUpperCase();
 
       if (curKey.length === 1 && guesses[curGuess].length != MAX_GUESS_LENGTH) {
-        setGuesses((prevState) =>
-          prevState.map((guess, index) =>
-            index === curGuess ? (guess += curKey) : guess
-          )
-        );
+        AddLetter(curKey);
       } else if (curKey === "ENTER") {
         if (guesses[curGuess].length !== MAX_GUESS_LENGTH) {
-          setInvalidGuess(true);
-          setTimeout(() => setInvalidGuess(false), 500);
-          return;
+          return SubmitInvalidGuess();
         }
-        const answer = validate(guesses[curGuess], targetWord);
-        if (winner(answer)) {
-          setWin(true);
-        } else if (curGuess + 1 >= 6) {
-          setLoss(true);
-        }
-        setRowAnswer((prevState) =>
-          prevState.map((row, index) => (index === curGuess ? answer : row))
-        );
-        setCurGuess((prevState) => prevState + 1);
+        SubmitValidGuess();
       } else if (curKey === "BACKSPACE" && guesses[curGuess].length > 0) {
-        setGuesses((prevState) =>
-          prevState.map((guess, index) =>
-            index === curGuess ? guess.slice(0, -1) : guess
-          )
-        );
+        DeleteGuess();
       }
     };
 
