@@ -43,12 +43,7 @@ export function initState() {
 }
 
 export function winner(guessStateArray: guessState[]) {
-  for (let i = 0; i < guessStateArray.length; i++) {
-    if (guessStateArray[i] !== guessState.Correct) {
-      return false;
-    }
-  }
-  return true;
+  return guessStateArray.every((entry) => entry === guessState.Correct);
 }
 
 export function shake() {

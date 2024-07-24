@@ -1,9 +1,9 @@
-import { guessState, MAX_GUESS_LENGTH } from "../util/validateGuess";
+import { guessState, MAX_GUESS_LENGTH, shake } from "../util/validateGuess";
 
 interface GameRowProps {
   guess: string;
   rowAnswer: guessState[];
-  isShake: boolean;
+  Shake: string;
 }
 
 interface TileProps {
@@ -11,18 +11,14 @@ interface TileProps {
   guessResult: guessState;
 }
 
-export default function GameRow({ guess, rowAnswer, isShake }: GameRowProps) {
+export default function GameRow({ guess, rowAnswer, Shake }: GameRowProps) {
   const paddedGuess = guess.padEnd(MAX_GUESS_LENGTH, " ").split("");
 
   const displayGuess = paddedGuess.map((char, index) => (
     <Tile key={index} value={char} guessResult={rowAnswer[index]} />
   ));
 
-  return (
-    <div className={`flex gap-2 ${isShake && "animate-shake"}`}>
-      {displayGuess}
-    </div>
-  );
+  return <div className={`flex gap-2 ${Shake}`}>{displayGuess}</div>;
 }
 
 function Tile({ value, guessResult }: TileProps) {

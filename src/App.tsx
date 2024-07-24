@@ -6,7 +6,6 @@ import {
   init,
   initState,
   MAX_GUESS_LENGTH,
-  shake,
   validate,
   winner,
 } from "./util/validateGuess";
@@ -18,7 +17,7 @@ export default function App() {
   const [targetWord, setTargetWord] = useState("BOOST");
   const [win, setWin] = useState(false);
   const [loss, setLoss] = useState(false);
-  const [isShake, setIsShake] = useState(false);
+  const [invalidGuess, setInvalidGuess] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -31,8 +30,9 @@ export default function App() {
           )
         );
       } else if (curKey === "ENTER") {
-        if (guesses[curGuess].length !== MAX_GUESS_LENGTH || shake()) {
-          setIsShake(true);
+        if (guesses[curGuess].length !== MAX_GUESS_LENGTH) {
+          setInvalidGuess(true);
+          setTimeout(() => setInvalidGuess(false), 500);
           return;
         }
         const answer = validate(guesses[curGuess], targetWord);
@@ -63,6 +63,7 @@ export default function App() {
     <div className="flex flex-col h-full">
       <NavBar />
       {win && <p className="text-3xl text-pink-500">YOU WON</p>}
+      {loss && <p className="text-3xl text-red-500">YOU LOST</p>}
       {!loss && (
         <main className="flex flex-col items-center mt-6">
           {guesses.map((row, index) => (
@@ -70,7 +71,7 @@ export default function App() {
               guess={row}
               key={index}
               rowAnswer={rowAnswer[index]}
-              isShake={index === curGuess ? isShake : false}
+              Shake={invalidGuess && index === curGuess ? "animate-shake" : ""}
             />
           ))}
         </main>
